@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ReasoningStep, AgentState, StreamMessage } from '@/types/agent';
 import GoalInput from '@/components/workspace/GoalInput';
@@ -9,7 +9,7 @@ import AgentStatus from '@/components/workspace/AgentStatus';
 import ResultDisplay from '@/components/workspace/ResultDisplay';
 import Link from 'next/link';
 
-export default function WorkspacePage() {
+function WorkspaceContent() {
   const searchParams = useSearchParams();
   const [reasoningSteps, setReasoningSteps] = useState<ReasoningStep[]>([]);
   const [agentStatus, setAgentStatus] = useState<AgentState>('idle');
@@ -183,5 +183,17 @@ export default function WorkspacePage() {
         {finalResult && <ResultDisplay result={finalResult} />}
       </div>
     </div>
+  );
+}
+
+export default function WorkspacePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    }>
+      <WorkspaceContent />
+    </Suspense>
   );
 }
